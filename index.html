@@ -3,224 +3,658 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Vocabulary</title>
+
+    <title>English Vocabulary Quiz | English Learning</title>
+
+    <meta
+        name="description"
+        content="English va Uzbek so'zlarini mashq qilish uchun bepul vocabulary quiz."
+    >
 
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
         }
 
         body {
             min-height: 100vh;
-            background: #f3f6fb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            font-family: Arial, sans-serif;
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef2ff,
+                    #f8fafc,
+                    #ecfeff
+                );
+            color: #1e293b;
+            padding: 30px 15px;
         }
 
-        .container {
+        .app {
             width: 100%;
-            max-width: 650px;
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            max-width: 700px;
+            margin: 0 auto;
         }
 
-        h1 {
+        .header {
             text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
             margin-bottom: 25px;
+        }
+
+        .logo {
+            font-size: 42px;
+            margin-bottom: 8px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow:
+                0 20px 50px rgba(15, 23, 42, 0.08);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
         }
 
         textarea {
             width: 100%;
-            height: 220px;
+            min-height: 230px;
             resize: vertical;
-            padding: 15px;
-            border: 2px solid #ddd;
+            padding: 16px;
+
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+
+            font-size: 16px;
+            line-height: 1.6;
+            outline: none;
+
+            transition: 0.2s;
+        }
+
+        textarea:focus {
+            border-color: #6366f1;
+            box-shadow:
+                0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .saved-text {
+            font-size: 13px;
+            color: #16a34a;
+            margin-top: 7px;
+            min-height: 18px;
+        }
+
+        .settings {
+            margin-top: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 13px 14px;
+
+            border: 2px solid #e2e8f0;
             border-radius: 12px;
+
+            background: white;
             font-size: 16px;
             outline: none;
         }
 
-        textarea:focus,
-        input:focus {
-            border-color: #4f46e5;
+        select:focus {
+            border-color: #6366f1;
         }
 
         button {
             width: 100%;
-            margin-top: 15px;
-            padding: 14px;
             border: none;
-            border-radius: 12px;
-            background: #4f46e5;
-            color: white;
-            font-size: 17px;
+            border-radius: 14px;
+
+            padding: 15px 18px;
+            font-size: 16px;
             font-weight: bold;
+
             cursor: pointer;
+            transition: 0.2s;
         }
 
         button:hover {
+            transform: translateY(-1px);
+        }
+
+        .primary {
+            background: #4f46e5;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .primary:hover {
             background: #4338ca;
         }
 
-        .quiz {
-            display: none;
-            text-align: center;
+        .secondary {
+            background: #eef2ff;
+            color: #4338ca;
+            margin-top: 10px;
         }
 
-        .progress {
-            color: #777;
-            margin-bottom: 15px;
-        }
-
-        .word {
-            font-size: 35px;
-            font-weight: bold;
-            margin: 30px 0;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 12px;
-            font-size: 18px;
-            text-align: center;
-            outline: none;
-        }
-
-        .feedback {
-            min-height: 30px;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        .correct {
-            color: green;
-        }
-
-        .wrong {
-            color: red;
-        }
-
-        .result {
-            display: none;
-            text-align: center;
-        }
-
-        .score {
-            font-size: 55px;
-            font-weight: bold;
-            margin: 25px 0;
-        }
-
-        .stats {
-            font-size: 20px;
-            line-height: 2;
+        .danger-light {
+            background: #fef2f2;
+            color: #dc2626;
+            margin-top: 10px;
         }
 
         .error {
-            color: red;
-            margin-top: 10px;
+            color: #dc2626;
+            margin-top: 12px;
             text-align: center;
+            line-height: 1.5;
+        }
+
+        /* QUIZ */
+
+        #quizScreen,
+        #resultScreen {
+            display: none;
+        }
+
+        .quiz-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 50px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background:
+                linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 50px;
+            transition: width 0.3s;
+        }
+
+        .question-label {
+            text-align: center;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .word {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 800;
+            margin: 25px 0 30px;
+            word-break: break-word;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 16px;
+
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+
+            font-size: 19px;
+            text-align: center;
+            outline: none;
+
+            transition: 0.2s;
+        }
+
+        .answer-input:focus {
+            border-color: #6366f1;
+            box-shadow:
+                0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .feedback {
+            min-height: 55px;
+            margin-top: 16px;
+
+            text-align: center;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+
+        .feedback.correct {
+            color: #16a34a;
+        }
+
+        .feedback.wrong {
+            color: #dc2626;
+        }
+
+        /* RESULT */
+
+        .result-header {
+            text-align: center;
+        }
+
+        .result-emoji {
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+
+            margin: 25px auto;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(135deg, #4f46e5, #8b5cf6);
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            color: white;
+
+            box-shadow:
+                0 15px 35px rgba(79, 70, 229, 0.25);
+        }
+
+        .score-number {
+            font-size: 42px;
+            font-weight: bold;
+        }
+
+        .score-text {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .stat {
+            border-radius: 16px;
+            padding: 18px 10px;
+            text-align: center;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+
+        .correct-stat {
+            background: #f0fdf4;
+            color: #15803d;
+        }
+
+        .wrong-stat {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .total-stat {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .result-message {
+            text-align: center;
+            color: #64748b;
+            margin: 5px 0 20px;
+            line-height: 1.5;
+        }
+
+        #wrongWordsBox {
+            margin-top: 22px;
+            background: #fff7ed;
+            border-radius: 16px;
+            padding: 18px;
+            display: none;
+        }
+
+        #wrongWordsBox h3 {
+            color: #c2410c;
+            margin-bottom: 12px;
+        }
+
+        .wrong-word-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #fed7aa;
+            line-height: 1.5;
+        }
+
+        .wrong-word-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px 10px;
+            }
+
+            .card {
+                padding: 22px 17px;
+                border-radius: 20px;
+            }
+
+            .header h1 {
+                font-size: 27px;
+            }
+
+            .word {
+                font-size: 34px;
+            }
+
+            .stats {
+                gap: 7px;
+            }
+
+            .stat {
+                padding: 14px 5px;
+            }
+
+            .stat strong {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
-    <!-- Lug'at kiritish -->
-    <div id="setup">
-        <h1>📚 Vocabulary Quiz</h1>
+    <div class="header">
+        <div class="logo">📚</div>
 
-        <p class="subtitle">
-            Lug‘atlaringizni kiriting
+        <h1>Vocabulary Quiz</h1>
+
+        <p>
+            O‘z lug‘atlaringizni kiriting va
+            ingliz tilidagi so‘zlarni mashq qiling.
         </p>
+    </div>
 
-        <textarea id="words" placeholder="Masalan:
+
+    <div class="card">
+
+        <!-- ================= SETUP ================= -->
+
+        <div id="setupScreen">
+
+            <div class="section-title">
+                Lug‘atlaringiz
+            </div>
+
+            <textarea
+                id="wordsInput"
+                placeholder="Masalan:
 
 apple - olma
 book - kitob
-school - maktab
 beautiful - chiroyli
-important - muhim"></textarea>
+fast - tez, tezkor
+improve - yaxshilamoq"
+            ></textarea>
 
-        <button onclick="startQuiz()">
-            Testni boshlash 🚀
-        </button>
-
-        <div id="error" class="error"></div>
-    </div>
-
-
-    <!-- Test -->
-    <div id="quiz" class="quiz">
-
-        <div id="progress" class="progress"></div>
-
-        <p>Tarjimasini yozing:</p>
-
-        <div id="questionWord" class="word"></div>
-
-        <input
-            id="answer"
-            type="text"
-            placeholder="Javobingiz..."
-            autocomplete="off"
-        >
-
-        <button onclick="checkAnswer()">
-            Tekshirish
-        </button>
-
-        <div id="feedback" class="feedback"></div>
-
-    </div>
+            <div
+                id="savedMessage"
+                class="saved-text"
+            ></div>
 
 
-    <!-- Natija -->
-    <div id="result" class="result">
+            <div class="settings">
 
-        <h1>🎉 Test tugadi!</h1>
+                <label for="quizMode">
+                    Test yo‘nalishi
+                </label>
 
-        <div id="score" class="score"></div>
+                <select id="quizMode">
 
-        <div class="stats">
-            ✅ To‘g‘ri:
-            <strong id="correctCount"></strong>
+                    <option value="en-uz">
+                        🇬🇧 English → 🇺🇿 Uzbek
+                    </option>
 
-            <br>
+                    <option value="uz-en">
+                        🇺🇿 Uzbek → 🇬🇧 English
+                    </option>
 
-            ❌ Noto‘g‘ri:
-            <strong id="wrongCount"></strong>
+                    <option value="mixed">
+                        🔀 Aralash
+                    </option>
 
-            <br>
+                </select>
 
-            📚 Jami:
-            <strong id="totalCount"></strong>
+            </div>
+
+
+            <button
+                class="primary"
+                onclick="startQuiz()"
+            >
+                Testni boshlash 🚀
+            </button>
+
+
+            <div
+                id="errorMessage"
+                class="error"
+            ></div>
+
         </div>
 
-        <button onclick="restartQuiz()">
-            🔄 Qayta ishlash
-        </button>
 
-        <button onclick="newWords()">
-            ➕ Yangi lug‘at kiritish
-        </button>
+
+        <!-- ================= QUIZ ================= -->
+
+        <div id="quizScreen">
+
+            <div class="quiz-top">
+
+                <span id="progressText">
+                    1 / 10
+                </span>
+
+                <span id="currentModeText">
+                    English → Uzbek
+                </span>
+
+            </div>
+
+
+            <div class="progress-container">
+
+                <div
+                    id="progressBar"
+                    class="progress-bar"
+                ></div>
+
+            </div>
+
+
+            <div
+                id="questionLabel"
+                class="question-label"
+            >
+                Tarjimasini yozing
+            </div>
+
+
+            <div
+                id="questionWord"
+                class="word"
+            ></div>
+
+
+            <input
+                type="text"
+                id="answerInput"
+                class="answer-input"
+                placeholder="Javobingiz..."
+                autocomplete="off"
+            >
+
+
+            <button
+                class="primary"
+                id="checkButton"
+                onclick="checkAnswer()"
+            >
+                Tekshirish
+            </button>
+
+
+            <div
+                id="feedback"
+                class="feedback"
+            ></div>
+
+        </div>
+
+
+
+        <!-- ================= RESULT ================= -->
+
+        <div id="resultScreen">
+
+            <div class="result-header">
+
+                <div
+                    id="resultEmoji"
+                    class="result-emoji"
+                >
+                    🎉
+                </div>
+
+                <h2>Test tugadi!</h2>
+
+            </div>
+
+
+            <div class="score-circle">
+
+                <div
+                    id="scoreNumber"
+                    class="score-number"
+                >
+                    0%
+                </div>
+
+                <div class="score-text">
+                    NATIJA
+                </div>
+
+            </div>
+
+
+            <div class="stats">
+
+                <div class="stat correct-stat">
+                    <strong id="correctCount">
+                        0
+                    </strong>
+                    ✅ To‘g‘ri
+                </div>
+
+                <div class="stat wrong-stat">
+                    <strong id="wrongCount">
+                        0
+                    </strong>
+                    ❌ Noto‘g‘ri
+                </div>
+
+                <div class="stat total-stat">
+                    <strong id="totalCount">
+                        0
+                    </strong>
+                    📚 Jami
+                </div>
+
+            </div>
+
+
+            <div
+                id="resultMessage"
+                class="result-message"
+            ></div>
+
+
+            <div id="wrongWordsBox">
+
+                <h3>
+                    ❌ Xato qilingan so‘zlar
+                </h3>
+
+                <div id="wrongWordsList"></div>
+
+            </div>
+
+
+            <button
+                id="retryWrongButton"
+                class="danger-light"
+                onclick="retryWrongWords()"
+            >
+                ❌ Xato so‘zlarni qayta ishlash
+            </button>
+
+
+            <button
+                class="primary"
+                onclick="restartQuiz()"
+            >
+                🔄 Qayta test
+            </button>
+
+
+            <button
+                class="secondary"
+                onclick="editVocabulary()"
+            >
+                ✏️ Lug‘atni tahrirlash
+            </button>
+
+        </div>
 
     </div>
 
@@ -229,319 +663,1135 @@ important - muhim"></textarea>
 
 <script>
 
-let vocabulary = [];
-let currentIndex = 0;
-let correct = 0;
-let wrong = 0;
-let waiting = false;
+    // =============================
+    // GLOBAL VARIABLES
+    // =============================
+
+    let vocabulary = [];
+
+    let quizWords = [];
+
+    let currentIndex = 0;
+
+    let correctAnswers = 0;
+
+    let wrongAnswers = 0;
+
+    let wrongWords = [];
+
+    let currentQuestion = null;
+
+    let waiting = false;
+
+    let retryMode = false;
 
 
-// Arrayni aralashtirish
-function shuffle(array) {
+    const wordsInput =
+        document.getElementById("wordsInput");
 
-    for (let i = array.length - 1; i > 0; i--) {
-
-        const j = Math.floor(Math.random() * (i + 1));
-
-        [array[i], array[j]] =
-        [array[j], array[i]];
-
-    }
-
-}
+    const quizMode =
+        document.getElementById("quizMode");
 
 
-// Testni boshlash
-function startQuiz() {
 
-    const text =
-        document.getElementById("words").value.trim();
+    // =============================
+    // LOAD SAVED DATA
+    // =============================
 
-    const error =
-        document.getElementById("error");
+    window.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
-    error.textContent = "";
+            const savedWords =
+                localStorage.getItem(
+                    "vocabularyWords"
+                );
 
-    if (!text) {
-
-        error.textContent =
-            "Avval lug‘atlarni kiriting.";
-
-        return;
-    }
-
-
-    const lines =
-        text.split("\n");
+            const savedMode =
+                localStorage.getItem(
+                    "vocabularyMode"
+                );
 
 
-    vocabulary = [];
+            if (savedWords) {
+
+                wordsInput.value =
+                    savedWords;
+
+            }
 
 
-    lines.forEach(line => {
+            if (savedMode) {
 
-        line = line.trim();
+                quizMode.value =
+                    savedMode;
 
-        if (!line) return;
-
-
-        // "-" belgisi bo‘yicha ajratadi
-        const separatorIndex =
-            line.indexOf("-");
-
-
-        if (separatorIndex === -1)
-            return;
-
-
-        const english =
-            line
-            .substring(0, separatorIndex)
-            .trim();
-
-
-        const uzbek =
-            line
-            .substring(separatorIndex + 1)
-            .trim();
-
-
-        if (english && uzbek) {
-
-            vocabulary.push({
-
-                english: english,
-                uzbek: uzbek
-
-            });
+            }
 
         }
+    );
 
-    });
 
 
-    if (vocabulary.length === 0) {
+    // =============================
+    // AUTO SAVE VOCABULARY
+    // =============================
 
-        error.textContent =
-            "Lug‘atlarni 'apple - olma' shaklida kiriting.";
+    wordsInput.addEventListener(
+        "input",
+        function () {
 
-        return;
-    }
+            localStorage.setItem(
+                "vocabularyWords",
+                wordsInput.value
+            );
 
 
-    // Tasodifiy tartib
-    shuffle(vocabulary);
+            showSavedMessage();
 
+        }
+    );
 
-    currentIndex = 0;
-    correct = 0;
-    wrong = 0;
 
+    quizMode.addEventListener(
+        "change",
+        function () {
 
-    document.getElementById("setup")
-        .style.display = "none";
+            localStorage.setItem(
+                "vocabularyMode",
+                quizMode.value
+            );
 
-    document.getElementById("result")
-        .style.display = "none";
+        }
+    );
 
-    document.getElementById("quiz")
-        .style.display = "block";
 
+    function showSavedMessage() {
 
-    showQuestion();
+        const message =
+            document.getElementById(
+                "savedMessage"
+            );
 
-}
 
+        message.textContent =
+            "✓ Lug‘at avtomatik saqlandi";
 
-// Savol chiqarish
-function showQuestion() {
 
-    if (currentIndex >= vocabulary.length) {
-
-        finishQuiz();
-
-        return;
-    }
-
-
-    waiting = false;
-
-
-    const word =
-        vocabulary[currentIndex];
-
-
-    document.getElementById("questionWord")
-        .textContent = word.english;
-
-
-    document.getElementById("progress")
-        .textContent =
-        `${currentIndex + 1} / ${vocabulary.length}`;
-
-
-    const answer =
-        document.getElementById("answer");
-
-
-    answer.value = "";
-    answer.focus();
-
-
-    document.getElementById("feedback")
-        .textContent = "";
-
-}
-
-
-// Javobni tekshirish
-function checkAnswer() {
-
-    if (waiting)
-        return;
-
-
-    const input =
-        document
-        .getElementById("answer")
-        .value
-        .trim()
-        .toLowerCase();
-
-
-    if (!input)
-        return;
-
-
-    const correctAnswer =
-        vocabulary[currentIndex]
-        .uzbek
-        .trim()
-        .toLowerCase();
-
-
-    const feedback =
-        document.getElementById("feedback");
-
-
-    if (input === correctAnswer) {
-
-        correct++;
-
-        feedback.innerHTML =
-            `<span class="correct">
-                ✅ To‘g‘ri!
-            </span>`;
-
-    }
-
-    else {
-
-        wrong++;
-
-        feedback.innerHTML =
-            `<span class="wrong">
-                ❌ Noto‘g‘ri.<br>
-                To‘g‘ri javob:
-                ${vocabulary[currentIndex].uzbek}
-            </span>`;
-
-    }
-
-
-    waiting = true;
-
-
-    setTimeout(() => {
-
-        currentIndex++;
-
-        showQuestion();
-
-    }, 1300);
-
-}
-
-
-// Testni tugatish
-function finishQuiz() {
-
-    document.getElementById("quiz")
-        .style.display = "none";
-
-    document.getElementById("result")
-        .style.display = "block";
-
-
-    document.getElementById("correctCount")
-        .textContent = correct;
-
-    document.getElementById("wrongCount")
-        .textContent = wrong;
-
-    document.getElementById("totalCount")
-        .textContent = vocabulary.length;
-
-
-    const percentage =
-        Math.round(
-            (correct / vocabulary.length) * 100
+        clearTimeout(
+            window.savedMessageTimer
         );
 
 
-    document.getElementById("score")
-        .textContent =
-        percentage + "%";
+        window.savedMessageTimer =
+            setTimeout(
+                function () {
 
-}
+                    message.textContent = "";
 
-
-// Shu lug‘at bilan qayta test
-function restartQuiz() {
-
-    shuffle(vocabulary);
-
-    currentIndex = 0;
-    correct = 0;
-    wrong = 0;
-
-
-    document.getElementById("result")
-        .style.display = "none";
-
-    document.getElementById("quiz")
-        .style.display = "block";
-
-
-    showQuestion();
-
-}
-
-
-// Yangi lug‘atlar
-function newWords() {
-
-    document.getElementById("result")
-        .style.display = "none";
-
-    document.getElementById("setup")
-        .style.display = "block";
-
-}
-
-
-// ENTER bilan tekshirish
-document
-.getElementById("answer")
-.addEventListener("keydown", function(event) {
-
-    if (event.key === "Enter") {
-
-        checkAnswer();
+                },
+                1800
+            );
 
     }
 
-});
+
+
+    // =============================
+    // PARSE VOCABULARY
+    // =============================
+
+    function parseVocabulary() {
+
+        const text =
+            wordsInput.value.trim();
+
+
+        if (!text) {
+
+            return [];
+
+        }
+
+
+        const lines =
+            text.split("\n");
+
+
+        const result = [];
+
+
+        lines.forEach(function (line) {
+
+            line = line.trim();
+
+
+            if (!line) {
+
+                return;
+
+            }
+
+
+            let separatorIndex = -1;
+
+            let separatorLength = 1;
+
+
+            if (line.includes(" - ")) {
+
+                separatorIndex =
+                    line.indexOf(" - ");
+
+                separatorLength = 3;
+
+            }
+
+            else if (line.includes("=")) {
+
+                separatorIndex =
+                    line.indexOf("=");
+
+            }
+
+            else if (line.includes(" -")) {
+
+                separatorIndex =
+                    line.indexOf(" -");
+
+                separatorLength = 2;
+
+            }
+
+            else if (line.includes("- ")) {
+
+                separatorIndex =
+                    line.indexOf("- ");
+
+                separatorLength = 2;
+
+            }
+
+            else {
+
+                separatorIndex =
+                    line.indexOf("-");
+
+            }
+
+
+            if (separatorIndex === -1) {
+
+                return;
+
+            }
+
+
+            const english =
+                line
+                    .substring(
+                        0,
+                        separatorIndex
+                    )
+                    .trim();
+
+
+            const uzbek =
+                line
+                    .substring(
+                        separatorIndex
+                        +
+                        separatorLength
+                    )
+                    .trim();
+
+
+            if (english && uzbek) {
+
+                result.push({
+
+                    english: english,
+
+                    uzbek: uzbek
+
+                });
+
+            }
+
+        });
+
+
+        return result;
+
+    }
+
+
+
+    // =============================
+    // SHUFFLE
+    // =============================
+
+    function shuffle(array) {
+
+        const copied =
+            [...array];
+
+
+        for (
+            let i = copied.length - 1;
+            i > 0;
+            i--
+        ) {
+
+            const j =
+                Math.floor(
+                    Math.random()
+                    *
+                    (i + 1)
+                );
+
+
+            [
+                copied[i],
+                copied[j]
+            ]
+            =
+            [
+                copied[j],
+                copied[i]
+            ];
+
+        }
+
+
+        return copied;
+
+    }
+
+
+
+    // =============================
+    // START QUIZ
+    // =============================
+
+    function startQuiz() {
+
+        const error =
+            document.getElementById(
+                "errorMessage"
+            );
+
+
+        error.textContent = "";
+
+
+        vocabulary =
+            parseVocabulary();
+
+
+        if (vocabulary.length === 0) {
+
+            error.textContent =
+                "Lug‘atlarni masalan: apple - olma shaklida kiriting.";
+
+            return;
+
+        }
+
+
+        localStorage.setItem(
+            "vocabularyWords",
+            wordsInput.value
+        );
+
+
+        localStorage.setItem(
+            "vocabularyMode",
+            quizMode.value
+        );
+
+
+        retryMode = false;
+
+        quizWords =
+            shuffle(vocabulary);
+
+
+        resetQuiz();
+
+    }
+
+
+
+    // =============================
+    // RESET QUIZ
+    // =============================
+
+    function resetQuiz() {
+
+        currentIndex = 0;
+
+        correctAnswers = 0;
+
+        wrongAnswers = 0;
+
+        wrongWords = [];
+
+        waiting = false;
+
+
+        document.getElementById(
+            "setupScreen"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "resultScreen"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "quizScreen"
+        ).style.display = "block";
+
+
+        showQuestion();
+
+    }
+
+
+
+    // =============================
+    // SHOW QUESTION
+    // =============================
+
+    function showQuestion() {
+
+        if (
+            currentIndex
+            >=
+            quizWords.length
+        ) {
+
+            finishQuiz();
+
+            return;
+
+        }
+
+
+        waiting = false;
+
+
+        const word =
+            quizWords[currentIndex];
+
+
+        let direction =
+            quizMode.value;
+
+
+        if (direction === "mixed") {
+
+            direction =
+                Math.random() < 0.5
+                ?
+                "en-uz"
+                :
+                "uz-en";
+
+        }
+
+
+        if (direction === "en-uz") {
+
+            currentQuestion = {
+
+                wordObject: word,
+
+                question:
+                    word.english,
+
+                answer:
+                    word.uzbek,
+
+                direction:
+                    "en-uz"
+
+            };
+
+
+            document.getElementById(
+                "questionLabel"
+            ).textContent =
+                "O‘zbekcha tarjimasini yozing";
+
+
+            document.getElementById(
+                "currentModeText"
+            ).textContent =
+                "🇬🇧 → 🇺🇿";
+
+        }
+
+        else {
+
+            currentQuestion = {
+
+                wordObject: word,
+
+                question:
+                    word.uzbek,
+
+                answer:
+                    word.english,
+
+                direction:
+                    "uz-en"
+
+            };
+
+
+            document.getElementById(
+                "questionLabel"
+            ).textContent =
+                "Inglizcha tarjimasini yozing";
+
+
+            document.getElementById(
+                "currentModeText"
+            ).textContent =
+                "🇺🇿 → 🇬🇧";
+
+        }
+
+
+        document.getElementById(
+            "questionWord"
+        ).textContent =
+            currentQuestion.question;
+
+
+        document.getElementById(
+            "progressText"
+        ).textContent =
+            (currentIndex + 1)
+            +
+            " / "
+            +
+            quizWords.length;
+
+
+        const progress =
+            (
+                currentIndex
+                /
+                quizWords.length
+            )
+            *
+            100;
+
+
+        document.getElementById(
+            "progressBar"
+        ).style.width =
+            progress + "%";
+
+
+        const answerInput =
+            document.getElementById(
+                "answerInput"
+            );
+
+
+        answerInput.value = "";
+
+        answerInput.disabled = false;
+
+        answerInput.focus();
+
+
+        const feedback =
+            document.getElementById(
+                "feedback"
+            );
+
+
+        feedback.textContent = "";
+
+        feedback.className =
+            "feedback";
+
+
+        document.getElementById(
+            "checkButton"
+        ).disabled = false;
+
+    }
+
+
+
+    // =============================
+    // NORMALIZE TEXT
+    // =============================
+
+    function normalizeText(text) {
+
+        return text
+
+            .toLowerCase()
+
+            .trim()
+
+            .replace(
+                /[‘’`ʻʼ]/g,
+                "'"
+            )
+
+            .replace(
+                /\s+/g,
+                " "
+            );
+
+    }
+
+
+
+    // =============================
+    // ACCEPT MULTIPLE ANSWERS
+    // =============================
+
+    function getPossibleAnswers(answer) {
+
+        return answer
+
+            .split(/[,;/|]/)
+
+            .map(function (item) {
+
+                return normalizeText(
+                    item
+                );
+
+            })
+
+            .filter(Boolean);
+
+    }
+
+
+
+    // =============================
+    // CHECK ANSWER
+    // =============================
+
+    function checkAnswer() {
+
+        if (waiting) {
+
+            return;
+
+        }
+
+
+        const inputElement =
+            document.getElementById(
+                "answerInput"
+            );
+
+
+        const userAnswer =
+            normalizeText(
+                inputElement.value
+            );
+
+
+        if (!userAnswer) {
+
+            return;
+
+        }
+
+
+        const possibleAnswers =
+            getPossibleAnswers(
+                currentQuestion.answer
+            );
+
+
+        const isCorrect =
+            possibleAnswers.includes(
+                userAnswer
+            );
+
+
+        const feedback =
+            document.getElementById(
+                "feedback"
+            );
+
+
+        if (isCorrect) {
+
+            correctAnswers++;
+
+
+            feedback.textContent =
+                "✅ To‘g‘ri!";
+
+
+            feedback.className =
+                "feedback correct";
+
+        }
+
+        else {
+
+            wrongAnswers++;
+
+
+            wrongWords.push({
+
+                english:
+                    currentQuestion
+                        .wordObject
+                        .english,
+
+                uzbek:
+                    currentQuestion
+                        .wordObject
+                        .uzbek
+
+            });
+
+
+            feedback.textContent =
+                "❌ Noto‘g‘ri. To‘g‘ri javob: "
+                +
+                currentQuestion.answer;
+
+
+            feedback.className =
+                "feedback wrong";
+
+        }
+
+
+        waiting = true;
+
+        inputElement.disabled = true;
+
+
+        document.getElementById(
+            "checkButton"
+        ).disabled = true;
+
+
+        setTimeout(
+
+            function () {
+
+                currentIndex++;
+
+                showQuestion();
+
+            },
+
+            1200
+
+        );
+
+    }
+
+
+
+    // =============================
+    // FINISH QUIZ
+    // =============================
+
+    function finishQuiz() {
+
+        document.getElementById(
+            "quizScreen"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "resultScreen"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "progressBar"
+        ).style.width =
+            "100%";
+
+
+        const total =
+            quizWords.length;
+
+
+        const percentage =
+            total === 0
+            ?
+            0
+            :
+            Math.round(
+                (
+                    correctAnswers
+                    /
+                    total
+                )
+                *
+                100
+            );
+
+
+        document.getElementById(
+            "scoreNumber"
+        ).textContent =
+            percentage + "%";
+
+
+        document.getElementById(
+            "correctCount"
+        ).textContent =
+            correctAnswers;
+
+
+        document.getElementById(
+            "wrongCount"
+        ).textContent =
+            wrongAnswers;
+
+
+        document.getElementById(
+            "totalCount"
+        ).textContent =
+            total;
+
+
+        setResultMessage(
+            percentage
+        );
+
+
+        showWrongWords();
+
+
+        saveResult(
+            percentage,
+            total
+        );
+
+    }
+
+
+
+    // =============================
+    // RESULT MESSAGE
+    // =============================
+
+    function setResultMessage(
+        percentage
+    ) {
+
+        const emoji =
+            document.getElementById(
+                "resultEmoji"
+            );
+
+
+        const message =
+            document.getElementById(
+                "resultMessage"
+            );
+
+
+        if (percentage === 100) {
+
+            emoji.textContent =
+                "🏆";
+
+            message.textContent =
+                "Ajoyib! Barcha so‘zlarga to‘g‘ri javob berdingiz.";
+
+        }
+
+        else if (percentage >= 80) {
+
+            emoji.textContent =
+                "🔥";
+
+            message.textContent =
+                "Juda yaxshi natija! Yana ozgina mashq bilan mukammal bo‘ladi.";
+
+        }
+
+        else if (percentage >= 60) {
+
+            emoji.textContent =
+                "👏";
+
+            message.textContent =
+                "Yaxshi! Xato qilgan so‘zlaringizni yana bir bor mashq qiling.";
+
+        }
+
+        else {
+
+            emoji.textContent =
+                "📚";
+
+            message.textContent =
+                "Mashqni davom ettiring. Xato qilingan so‘zlarni qayta ishlash foydali bo‘ladi.";
+
+        }
+
+    }
+
+
+
+    // =============================
+    // SHOW WRONG WORDS
+    // =============================
+
+    function showWrongWords() {
+
+        const box =
+            document.getElementById(
+                "wrongWordsBox"
+            );
+
+
+        const list =
+            document.getElementById(
+                "wrongWordsList"
+            );
+
+
+        const retryButton =
+            document.getElementById(
+                "retryWrongButton"
+            );
+
+
+        list.innerHTML = "";
+
+
+        if (wrongWords.length === 0) {
+
+            box.style.display =
+                "none";
+
+            retryButton.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        box.style.display =
+            "block";
+
+        retryButton.style.display =
+            "block";
+
+
+        wrongWords.forEach(
+            function (word) {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "wrong-word-item";
+
+
+                const english =
+                    document.createElement(
+                        "strong"
+                    );
+
+
+                english.textContent =
+                    word.english;
+
+
+                item.appendChild(
+                    english
+                );
+
+
+                item.appendChild(
+                    document.createTextNode(
+                        " → "
+                        +
+                        word.uzbek
+                    )
+                );
+
+
+                list.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+
+
+
+    // =============================
+    // RETRY WRONG WORDS
+    // =============================
+
+    function retryWrongWords() {
+
+        if (wrongWords.length === 0) {
+
+            return;
+
+        }
+
+
+        quizWords =
+            shuffle(
+                wrongWords
+            );
+
+
+        retryMode = true;
+
+
+        resetQuiz();
+
+    }
+
+
+
+    // =============================
+    // RESTART FULL QUIZ
+    // =============================
+
+    function restartQuiz() {
+
+        vocabulary =
+            parseVocabulary();
+
+
+        quizWords =
+            shuffle(
+                vocabulary
+            );
+
+
+        retryMode = false;
+
+
+        resetQuiz();
+
+    }
+
+
+
+    // =============================
+    // EDIT VOCABULARY
+    // =============================
+
+    function editVocabulary() {
+
+        document.getElementById(
+            "resultScreen"
+        ).style.display =
+            "none";
+
+
+        document.getElementById(
+            "quizScreen"
+        ).style.display =
+            "none";
+
+
+        document.getElementById(
+            "setupScreen"
+        ).style.display =
+            "block";
+
+    }
+
+
+
+    // =============================
+    // SAVE LAST RESULT
+    // =============================
+
+    function saveResult(
+        percentage,
+        total
+    ) {
+
+        const result = {
+
+            percentage:
+                percentage,
+
+            correct:
+                correctAnswers,
+
+            wrong:
+                wrongAnswers,
+
+            total:
+                total,
+
+            date:
+                new Date()
+                    .toLocaleString()
+
+        };
+
+
+        localStorage.setItem(
+            "lastVocabularyResult",
+            JSON.stringify(
+                result
+            )
+        );
+
+    }
+
+
+
+    // =============================
+    // ENTER KEY
+    // =============================
+
+    document.getElementById(
+        "answerInput"
+    ).addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key
+                ===
+                "Enter"
+            ) {
+
+                event.preventDefault();
+
+                checkAnswer();
+
+            }
+
+        }
+    );
 
 </script>
 
