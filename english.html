@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Vocabulary</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f3f6fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 220px;
+            resize: vertical;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        textarea:focus,
+        input:focus {
+            border-color: #4f46e5;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #4f46e5;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4338ca;
+        }
+
+        .quiz {
+            display: none;
+            text-align: center;
+        }
+
+        .progress {
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .word {
+            font-size: 35px;
+            font-weight: bold;
+            margin: 30px 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+        }
+
+        .feedback {
+            min-height: 30px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .wrong {
+            color: red;
+        }
+
+        .result {
+            display: none;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 55px;
+            font-weight: bold;
+            margin: 25px 0;
+        }
+
+        .stats {
+            font-size: 20px;
+            line-height: 2;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Lug'at kiritish -->
+    <div id="setup">
+        <h1>📚 Vocabulary Quiz</h1>
+
+        <p class="subtitle">
+            Lug‘atlaringizni kiriting
+        </p>
+
+        <textarea id="words" placeholder="Masalan:
+
+apple - olma
+book - kitob
+school - maktab
+beautiful - chiroyli
+important - muhim"></textarea>
+
+        <button onclick="startQuiz()">
+            Testni boshlash 🚀
+        </button>
+
+        <div id="error" class="error"></div>
+    </div>
+
+
+    <!-- Test -->
+    <div id="quiz" class="quiz">
+
+        <div id="progress" class="progress"></div>
+
+        <p>Tarjimasini yozing:</p>
+
+        <div id="questionWord" class="word"></div>
+
+        <input
+            id="answer"
+            type="text"
+            placeholder="Javobingiz..."
+            autocomplete="off"
+        >
+
+        <button onclick="checkAnswer()">
+            Tekshirish
+        </button>
+
+        <div id="feedback" class="feedback"></div>
+
+    </div>
+
+
+    <!-- Natija -->
+    <div id="result" class="result">
+
+        <h1>🎉 Test tugadi!</h1>
+
+        <div id="score" class="score"></div>
+
+        <div class="stats">
+            ✅ To‘g‘ri:
+            <strong id="correctCount"></strong>
+
+            <br>
+
+            ❌ Noto‘g‘ri:
+            <strong id="wrongCount"></strong>
+
+            <br>
+
+            📚 Jami:
+            <strong id="totalCount"></strong>
+        </div>
+
+        <button onclick="restartQuiz()">
+            🔄 Qayta ishlash
+        </button>
+
+        <button onclick="newWords()">
+            ➕ Yangi lug‘at kiritish
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let vocabulary = [];
+let currentIndex = 0;
+let correct = 0;
+let wrong = 0;
+let waiting = false;
+
+
+// Arrayni aralashtirish
+function shuffle(array) {
+
+    for (let i = array.length - 1; i > 0; i--) {
+
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [array[i], array[j]] =
+        [array[j], array[i]];
+
+    }
+
+}
+
+
+// Testni boshlash
+function startQuiz() {
+
+    const text =
+        document.getElementById("words").value.trim();
+
+    const error =
+        document.getElementById("error");
+
+    error.textContent = "";
+
+    if (!text) {
+
+        error.textContent =
+            "Avval lug‘atlarni kiriting.";
+
+        return;
+    }
+
+
+    const lines =
+        text.split("\n");
+
+
+    vocabulary = [];
+
+
+    lines.forEach(line => {
+
+        line = line.trim();
+
+        if (!line) return;
+
+
+        // "-" belgisi bo‘yicha ajratadi
+        const separatorIndex =
+            line.indexOf("-");
+
+
+        if (separatorIndex === -1)
+            return;
+
+
+        const english =
+            line
+            .substring(0, separatorIndex)
+            .trim();
+
+
+        const uzbek =
+            line
+            .substring(separatorIndex + 1)
+            .trim();
+
+
+        if (english && uzbek) {
+
+            vocabulary.push({
+
+                english: english,
+                uzbek: uzbek
+
+            });
+
+        }
+
+    });
+
+
+    if (vocabulary.length === 0) {
+
+        error.textContent =
+            "Lug‘atlarni 'apple - olma' shaklida kiriting.";
+
+        return;
+    }
+
+
+    // Tasodifiy tartib
+    shuffle(vocabulary);
+
+
+    currentIndex = 0;
+    correct = 0;
+    wrong = 0;
+
+
+    document.getElementById("setup")
+        .style.display = "none";
+
+    document.getElementById("result")
+        .style.display = "none";
+
+    document.getElementById("quiz")
+        .style.display = "block";
+
+
+    showQuestion();
+
+}
+
+
+// Savol chiqarish
+function showQuestion() {
+
+    if (currentIndex >= vocabulary.length) {
+
+        finishQuiz();
+
+        return;
+    }
+
+
+    waiting = false;
+
+
+    const word =
+        vocabulary[currentIndex];
+
+
+    document.getElementById("questionWord")
+        .textContent = word.english;
+
+
+    document.getElementById("progress")
+        .textContent =
+        `${currentIndex + 1} / ${vocabulary.length}`;
+
+
+    const answer =
+        document.getElementById("answer");
+
+
+    answer.value = "";
+    answer.focus();
+
+
+    document.getElementById("feedback")
+        .textContent = "";
+
+}
+
+
+// Javobni tekshirish
+function checkAnswer() {
+
+    if (waiting)
+        return;
+
+
+    const input =
+        document
+        .getElementById("answer")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    if (!input)
+        return;
+
+
+    const correctAnswer =
+        vocabulary[currentIndex]
+        .uzbek
+        .trim()
+        .toLowerCase();
+
+
+    const feedback =
+        document.getElementById("feedback");
+
+
+    if (input === correctAnswer) {
+
+        correct++;
+
+        feedback.innerHTML =
+            `<span class="correct">
+                ✅ To‘g‘ri!
+            </span>`;
+
+    }
+
+    else {
+
+        wrong++;
+
+        feedback.innerHTML =
+            `<span class="wrong">
+                ❌ Noto‘g‘ri.<br>
+                To‘g‘ri javob:
+                ${vocabulary[currentIndex].uzbek}
+            </span>`;
+
+    }
+
+
+    waiting = true;
+
+
+    setTimeout(() => {
+
+        currentIndex++;
+
+        showQuestion();
+
+    }, 1300);
+
+}
+
+
+// Testni tugatish
+function finishQuiz() {
+
+    document.getElementById("quiz")
+        .style.display = "none";
+
+    document.getElementById("result")
+        .style.display = "block";
+
+
+    document.getElementById("correctCount")
+        .textContent = correct;
+
+    document.getElementById("wrongCount")
+        .textContent = wrong;
+
+    document.getElementById("totalCount")
+        .textContent = vocabulary.length;
+
+
+    const percentage =
+        Math.round(
+            (correct / vocabulary.length) * 100
+        );
+
+
+    document.getElementById("score")
+        .textContent =
+        percentage + "%";
+
+}
+
+
+// Shu lug‘at bilan qayta test
+function restartQuiz() {
+
+    shuffle(vocabulary);
+
+    currentIndex = 0;
+    correct = 0;
+    wrong = 0;
+
+
+    document.getElementById("result")
+        .style.display = "none";
+
+    document.getElementById("quiz")
+        .style.display = "block";
+
+
+    showQuestion();
+
+}
+
+
+// Yangi lug‘atlar
+function newWords() {
+
+    document.getElementById("result")
+        .style.display = "none";
+
+    document.getElementById("setup")
+        .style.display = "block";
+
+}
+
+
+// ENTER bilan tekshirish
+document
+.getElementById("answer")
+.addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+
+        checkAnswer();
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
